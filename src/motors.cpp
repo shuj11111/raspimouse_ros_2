@@ -135,7 +135,7 @@ void callback9Axis(const sensor_msgs::Imu::ConstPtr& msg)
 	vel.angular.z = round(msg->angular_velocity.z * 20)/20; // cut less than 0.05[rad/s]
 }
 
-nav_msgs::Odometry send_odom(void)
+nav_msgs::Odometry send_odom(int roboID)
 {
 	cur_time = Time::now();
 
@@ -151,8 +151,8 @@ nav_msgs::Odometry send_odom(void)
 
 	geometry_msgs::TransformStamped odom_trans;
  	odom_trans.header.stamp = cur_time;
-  	odom_trans.header.frame_id = "odom";
-	odom_trans.child_frame_id = "base_link";
+  	odom_trans.header.frame_id = "odom" + std::to_string(roboID);
+	odom_trans.child_frame_id = "base_link" + std::to_string(roboID);
 
   	odom_trans.transform.translation.x = odom_x;
   	odom_trans.transform.translation.y = odom_y;
@@ -169,8 +169,8 @@ nav_msgs::Odometry send_odom(void)
 
 	nav_msgs::Odometry odom;
 	odom.header.stamp = cur_time;
-	odom.header.frame_id = "odom";
-	odom.child_frame_id = "base_link";
+	odom.header.frame_id = "odom" + std::to_string(roboID);
+	odom.child_frame_id = "base_link" + std::to_string(roboID);
 
 	odom.pose.pose.position.x = odom_x;
 	odom.pose.pose.position.y = odom_y;
@@ -220,6 +220,9 @@ int main(int argc, char **argv)
 
 	send_time = Time::now();
 
+	int _roboID;
+	n.param("robo_id", _roboID, 1);
+
 	Rate loop_rate(10);
 	while(ok()){
 		if(in_cmdvel and Time::now().toSec() - last_cmdvel.toSec() >= 1.0){
@@ -227,7 +230,7 @@ int main(int argc, char **argv)
 			in_cmdvel = false;
 		}
 
-		pub_odom.publish(send_odom());
+		pub_odom.publish(send_odom(_roboID));
 		spinOnce();
 		loop_rate.sleep();
 	}
