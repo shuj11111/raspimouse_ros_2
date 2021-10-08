@@ -13,6 +13,7 @@
   <arg name="initial_motor_power" default="off" />
   <node pkg="raspimouse_ros_2" name="motors" type="motors" required="true" output="screen" args="$(arg initial_motor_power)">
       <param name="robo_id" value="$(arg robo_id)" />
+      <remap from="cmd_vel" value="cmd_vel$(arg robo_id)" />
   </node>
 
   <node pkg="raspimouse_ros_2" name="leds" type="leds" required="true" />
