@@ -201,6 +201,8 @@ int main(int argc, char **argv)
 
 	signal(SIGINT, onSigint);
 
+	int _roboID = atoi(argv[2]);
+
 	last_cmdvel = Time::now();
 	cur_time = Time::now();
 	send_time = Time::now();
@@ -219,9 +221,6 @@ int main(int argc, char **argv)
 	odom_theta = 0.0;
 
 	send_time = Time::now();
-
-	int _roboID;
-	n.param("robo_id", _roboID, 1);
 
 	Rate loop_rate(10);
 	while(ok()){
